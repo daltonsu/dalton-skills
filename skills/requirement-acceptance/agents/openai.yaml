@@ -1,0 +1,4 @@
+interface:
+  display_name: "需求验收"
+  short_description: "对照飞书或 Markdown 需求与问题清单，验证代码和实际运行结果并产出验收报告"
+  default_prompt: "使用 $requirement-acceptance，对照需求文档、项目 Markdown 问题清单或直接描述验收开发结果，生成有证据的报告，不修改业务代码。"

@@ -27,6 +27,7 @@
   "integration_status": "not_started",
   "integrated_sha": null,
   "pushed_sha": null,
+  "branch_cleanup": null,
   "base_branch": null,
   "base_sha": null,
   "worktree": null,
@@ -55,5 +56,7 @@
 状态：reading → awaiting_scope → implementing → validating → committing；每个需求验证并提交后回到下一项 implementing，全部完成后为 locally_completed。需要推送时再经过 awaiting_push → integrating → delivering → completed；另有 blocked、cancelled。不推送的任务可以停在 locally_completed 并交付。检查项记录命令、退出码、结果摘要；确认项记录原话与时间。旧 schema_version=2 无提交列表时可根据真实 commit_sha 恢复，不编造多条提交。
 
 `integration_status` 分别记录尚未合并、已合并或失败，`integrated_sha` 记录合并后本地 main 的 SHA；`pushed_sha` 记录已核实推送的 main SHA。main 已合并但推送失败时保留两阶段的真实状态。
+
+`branch_cleanup` 记录本次 codex/ 分支名、删除前 tip SHA、已验证包含该 tip 的 main SHA、清理时间与结果/保留原因。删除分支后保留记录中的原分支名和提交 SHA，恢复时不要因分支不存在重复创建任务；先核对 main 中已合入的历史。
 
 仅在获取真实结果后更新状态。locally_completed 代表需求均已验证且本地提交（无改动条目注明原因），不代表已推送；completed 代表已授权推送交付动作完成，不代表部署成功；单独保存部署结果。关键阶段更新记录，使用临时文件替换避免半写入。不得保存凭据、环境变量全集或无关个人数据。

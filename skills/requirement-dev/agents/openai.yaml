@@ -1,4 +1,4 @@
 interface:
   display_name: "需求开发"
-  short_description: "读取飞书或 Markdown 需求，确认范围与分支，每完成一项自动本地提交，推送另行确认"
-  default_prompt: "使用 $requirement-dev，根据需求文档或问题清单开发，先确认需求与分支，每完成一项以中文 Conventional Commit 本地提交，推送前再确认。"
+  short_description: "按需求在 codex/dev 逐项本地提交，获准后 squash 汇总到 main 并推送"
+  default_prompt: "使用 $requirement-dev，根据需求文档或问题清单开发，确认范围后默认在 codex/dev 逐需求验证并以中文 Conventional Commits 本地提交；明确授权推送后，将本次全部改动 squash 为一条适度概括主要成果的 Conventional Commit，仅推送 main 并本地归档开发分支。"

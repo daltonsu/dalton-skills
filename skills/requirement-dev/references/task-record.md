@@ -13,7 +13,7 @@
 
 ```json
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "id": "20261103-xxxxxxxx",
   "sources": [
     {"type": "local_markdown", "path": "/absolute/project/docs/issues.md", "url": null, "selection": ["ISSUE-01"], "read_at": null, "version": null, "sha256": null, "snapshot": "requirement.md"}
@@ -25,6 +25,9 @@
   "target_branch": null,
   "integration_branch": "main",
   "integration_status": "not_started",
+  "integration_method": null,
+  "integration_base_sha": null,
+  "integration_sources": [],
   "integrated_sha": null,
   "pushed_sha": null,
   "branch_cleanup": null,
@@ -49,14 +52,16 @@
 
 来源 type 为 feishu_doc、local_markdown 或 user_message；不适用的 path/url/version 置 null。多个来源分别保存哈希，selection 记录问题 ID 或章节。旧 schema_version=1 的 source 视为单元素 sources 读取，保留原始记录。快照路径相对于任务目录，仓库和原始文件路径使用绝对路径。
 
-`task_branch` 是用户确认的本地提交分支，`target_branch` 是计划推送的远端分支（默认 main；尚未计划推送时为 null），`integration_branch` 默认 main。`codex/` 不得作为远端目标。`branch_confirmation` 记录分支计划、用户确认原话及时间，与 `scope_confirmation` 可以来自同一次确认。
+`task_branch` 是本次获准使用的本地开发分支，默认 codex/dev；`target_branch` 是计划推送的远端分支（默认 main；尚未计划推送时为 null），`integration_branch` 默认 main。`codex/` 及其归档不得作为远端目标。`branch_confirmation` 记录分支计划、授权依据及时间；沿用已确认的默认约定时说明依据，不伪造用户本轮确认原话。
 
 `requirements` 每项记录需求 ID、标题、验收条件、状态、checks 和 commit_shas。`commits` 每项记录需求 ID（整合提交可为 null）、SHA、分支、消息、时间和检查摘要；`commit_sha` 为最近一次任务提交，兼容旧读取方式，不能代替完整提交列表。恢复时先核对真实 Git 历史与条目映射，已完成提交不重复提交。
 
 状态：reading → awaiting_scope → implementing → validating → committing；每个需求验证并提交后回到下一项 implementing，全部完成后为 locally_completed。需要推送时再经过 awaiting_push → integrating → delivering → completed；另有 blocked、cancelled。不推送的任务可以停在 locally_completed 并交付。检查项记录命令、退出码、结果摘要；确认项记录原话与时间。旧 schema_version=2 无提交列表时可根据真实 commit_sha 恢复，不编造多条提交。
 
-`integration_status` 分别记录尚未合并、已合并或失败，`integrated_sha` 记录合并后本地 main 的 SHA；`pushed_sha` 记录已核实推送的 main SHA。main 已合并但推送失败时保留两阶段的真实状态。
+`integration_status` 分别记录尚未合并、已合并或失败。`integration_method` 在实际完成时记录为 squash；`integration_base_sha` 是本次 squash 前已同步的 main SHA；`integration_sources` 每项保存 `{ "branch": "codex/dev", "tip_sha": "实际tip", "commit_shas": ["原始开发提交SHA"] }`，按真实来源记录，建立原始提交与汇总提交的对应关系。`integrated_sha` 保存 **main 汇总提交 SHA**，后续同步 main 不覆盖它；`pushed_sha` 保存已核实推送的 main tip，可因后续安全同步而与汇总 SHA 不同。main 已合入但推送失败时保留两个阶段的真实状态。
 
-`branch_cleanup` 记录本次 codex/ 分支名、删除前 tip SHA、已验证包含该 tip 的 main SHA、清理时间与结果/保留原因。删除分支后保留记录中的原分支名和提交 SHA，恢复时不要因分支不存在重复创建任务；先核对 main 中已合入的历史。
+`branch_cleanup` 保存归档时间、总体结果及逐分支记录：原分支名、tip SHA、archive_branch、integrated_sha、结果/保留原因。归档不是删除：保留原分支与原始 SHA 映射，在归档引用核实详细历史；通过远端 main 是否包含汇总 SHA 验证交付，不要求包含原始开发 SHA。恢复时先核对汇总提交、归档及实际 worktree，不因原分支名不存在而重复创建、提交或 squash；下一轮开发另建任务并基于最新 main 创建 codex/dev。
+
+兼容旧 schema_version=3：缺少整合方式、来源或归档字段时置 null/空列表，按真实 Git 与旧记录核实，不把旧普通合并认作 squash。历史 branch_cleanup 删除结果保留原样，不虚构归档分支或改写旧任务记录。
 
 仅在获取真实结果后更新状态。locally_completed 代表需求均已验证且本地提交（无改动条目注明原因），不代表已推送；completed 代表已授权推送交付动作完成，不代表部署成功；单独保存部署结果。关键阶段更新记录，使用临时文件替换避免半写入。不得保存凭据、环境变量全集或无关个人数据。

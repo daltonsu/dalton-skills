@@ -60,7 +60,7 @@
 
 `integration_status` 分别记录尚未合并、已合并或失败。`integration_method` 在实际完成时记录为 squash；`integration_base_sha` 是本次 squash 前已同步的 main SHA；`integration_sources` 每项保存 `{ "branch": "codex/dev", "tip_sha": "实际tip", "commit_shas": ["原始开发提交SHA"] }`，按真实来源记录，建立原始提交与汇总提交的对应关系。`integrated_sha` 保存 **main 汇总提交 SHA**，后续同步 main 不覆盖它；`pushed_sha` 保存已核实推送的 main tip，可因后续安全同步而与汇总 SHA 不同。main 已合入但推送失败时保留两个阶段的真实状态。
 
-`branch_cleanup` 保存归档时间、总体结果及逐分支记录：原分支名、tip SHA、archive_branch、integrated_sha、结果/保留原因。归档不是删除：保留原分支与原始 SHA 映射，在归档引用核实详细历史；通过远端 main 是否包含汇总 SHA 验证交付，不要求包含原始开发 SHA。恢复时先核对汇总提交、归档及实际 worktree，不因原分支名不存在而重复创建、提交或 squash；下一轮开发另建任务并基于最新 main 创建 codex/dev。
+`branch_cleanup` 保存归档时间、总体结果及逐分支记录：原分支名、tip SHA、archive_branch、integrated_sha、结果/保留原因。归档不是删除：保留原分支与原始 SHA 映射，在归档引用核实详细历史；通过远端 main 是否包含汇总 SHA 验证交付，不要求包含原始开发 SHA。恢复时先核对汇总提交、归档及实际 worktree，不因原分支名不存在而重复创建、提交或 squash。下一轮可以新建任务记录，但已有 codex/dev 和可用工作目录默认继续复用；只有该分支不存在时才基于最新 main 创建。复用时记录本次起始提交与原有工作边界，不将旧任务提交自动计入新任务。
 
 兼容旧 schema_version=3：缺少整合方式、来源或归档字段时置 null/空列表，按真实 Git 与旧记录核实，不把旧普通合并认作 squash。历史 branch_cleanup 删除结果保留原样，不虚构归档分支或改写旧任务记录。
 

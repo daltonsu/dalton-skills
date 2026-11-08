@@ -1,0 +1,4 @@
+interface:
+  display_name: "fork项目开发"
+  short_description: "维护 fork 的个人稳定版、同步上游，并通过独立 contrib 分支向原仓库提交 PR"
+  default_prompt: "使用 $fork-project-dev，按本次需求开发个人功能、同步上游或提交贡献：parent/main 保存原版，codex/dev 开发后合回 main；向原仓库提交 PR 时，从原版创建 contrib/ 分支并推送到自己的 fork。"

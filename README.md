@@ -7,6 +7,7 @@
 - `requirement-dev`（需求开发）：支持飞书、本地 Markdown 需求/问题清单、验收报告和直接描述；可按问题记录继续修复；确认需求与分支后每完成一项自动本地 commit，推送另行确认。
 - `requirement-acceptance`（需求验收）：支持飞书、本地 Markdown 需求/问题清单和直接描述，通过代码、测试和页面操作独立验收，产出有证据的本地报告。
 - `fork-project-dev`（fork项目开发）：parent/main 保存上游原版，main 维护个人稳定版；默认在 codex/dev 开发后直接合回 main，上游更新直接合入本地 main，dev 可选；向原仓库提交 PR 使用独立的 contrib/ 分支。
+- `next-day-trade-plan`（次日波段交易计划）：面向约两周日 K 波段、晚上选股且不盯盘的风格，支持预定时段执行或买卖条件单，规划利润垫首减、余仓等待后续冲高，在整个波段中分三批退出。
 
 开发调用示例：
 
@@ -27,6 +28,12 @@ Fork 项目调用示例：
 默认功能路线为 `main → codex/dev → main`，同步路线为 `upstream/main → parent/main → main`，均在验证通过后才推送或部署。dev 仅在需要时加入；上游同步使用普通 merge 保留祖先关系，不套用功能交付的 squash 约定。
 
 上游贡献路线为 `parent/main → contrib/<改动描述> → 自己的 fork → 原仓库 PR`，每个 PR 一条分支，例如 `contrib/fix-rule-validation`。先同步原版基线，只包含本次贡献的改动；PR 目标遵循原项目贡献指南。
+
+交易计划调用示例：
+
+> 使用 $next-day-trade-plan，结合持仓和最新日 K，按约两周波段、利润垫首减后等待冲高的节奏，给出无需盯盘的次日计划，可采用预定时段执行或买卖条件单。
+
+个性化持仓保存在技能目录的 `references/position.local.md`，带确认日期且由 Git 忽略。新环境没有此文件时使用对话提供的持仓；市场数据每次重新获取。该技能只生成分析计划，不执行交易。
 
 ## 分支与云端推送约定
 

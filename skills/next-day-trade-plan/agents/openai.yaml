@@ -1,0 +1,4 @@
+interface:
+  display_name: "次日波段交易计划"
+  short_description: "按约两周日K波段与不盯盘习惯，规划利润垫首减、余仓等待及买卖条件单"
+  default_prompt: "使用 $next-day-trade-plan，结合持仓和最新日K，按约两周波段、利润垫首减后等待冲高的节奏，给出无需盯盘的次日计划，可采用预定时段执行或买卖条件单。"

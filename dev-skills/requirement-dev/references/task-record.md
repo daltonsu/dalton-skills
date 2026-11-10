@@ -13,7 +13,7 @@
 
 ```json
 {
-  "schema_version": 4,
+  "schema_version": 5,
   "id": "20261103-xxxxxxxx",
   "sources": [
     {"type": "local_markdown", "path": "/absolute/project/docs/issues.md", "url": null, "selection": ["ISSUE-01"], "read_at": null, "version": null, "sha256": null, "snapshot": "requirement.md"}
@@ -60,8 +60,8 @@
 
 `integration_status` 分别记录尚未合并、已合并或失败。`integration_method` 在实际完成时记录为 squash；`integration_base_sha` 是本次 squash 前已同步的 main SHA；`integration_sources` 每项保存 `{ "branch": "codex/dev", "tip_sha": "实际tip", "commit_shas": ["原始开发提交SHA"] }`，按真实来源记录，建立原始提交与汇总提交的对应关系。`integrated_sha` 保存 **main 汇总提交 SHA**，后续同步 main 不覆盖它；`pushed_sha` 保存已核实推送的 main tip，可因后续安全同步而与汇总 SHA 不同。main 已合入但推送失败时保留两个阶段的真实状态。
 
-`branch_cleanup` 保存归档时间、总体结果及逐分支记录：原分支名、tip SHA、archive_branch、integrated_sha、结果/保留原因。归档不是删除：保留原分支与原始 SHA 映射，在归档引用核实详细历史；通过远端 main 是否包含汇总 SHA 验证交付，不要求包含原始开发 SHA。恢复时先核对汇总提交、归档及实际 worktree，不因原分支名不存在而重复创建、提交或 squash。下一轮可以新建任务记录，但已有 codex/dev 和可用工作目录默认继续复用；只有该分支不存在时才基于最新 main 创建。复用时记录本次起始提交与原有工作边界，不将旧任务提交自动计入新任务。
+`branch_cleanup` 保存 `action=delete`、清理时间、总体结果及逐分支记录：原分支名、tip SHA、integrated_sha、内容覆盖依据、结果/保留原因。完整合入本地 main 并验证即可删除，不以推送成功为前提；推送状态单独记录。记录源提交与汇总 SHA 映射，不再创建 `archive_branch`。删除后以 main 汇总提交、验证结果和任务记录恢复，不依赖已删除分支或可能被回收的原始提交对象；不因原分支名不存在而重复创建、提交或 squash。下一轮已有 codex/dev 和可用工作目录时核对并复用，只有不存在才从最新 main 创建；复用不将旧任务提交自动计入新任务。
 
-兼容旧 schema_version=3：缺少整合方式、来源或归档字段时置 null/空列表，按真实 Git 与旧记录核实，不把旧普通合并认作 squash。历史 branch_cleanup 删除结果保留原样，不虚构归档分支或改写旧任务记录。
+兼容旧 schema_version=3/4：缺少整合方式、来源或清理字段时置 null/空列表，按真实 Git 与旧记录核实，不把旧普通合并认作 squash。旧 `branch_cleanup` 中的删除或归档结果及 `archive_branch` 字段保留原样，不虚构删除结果、不改写历史，也不因此清理旧归档。
 
 仅在获取真实结果后更新状态。locally_completed 代表需求均已验证且本地提交（无改动条目注明原因），不代表已推送；completed 代表已授权推送交付动作完成，不代表部署成功；单独保存部署结果。关键阶段更新记录，使用临时文件替换避免半写入。不得保存凭据、环境变量全集或无关个人数据。

@@ -1,6 +1,6 @@
 # Dalton Skills
 
-个人维护的 Codex Skill 源文件。统一放在 `skills/<skill-name>/`，`~/.codex/skills/` 仅为这些自建 Skill 保留软链接；系统与插件技能不纳入管理。
+个人维护的 Codex Skill 源文件。开发技能放在 `dev-skills/<skill-name>/`，投资技能放在 `invest-skills/<skill-name>/`，`~/.codex/skills/` 仅为这些自建 Skill 保留软链接；系统与插件技能不纳入管理。
 
 ## 当前技能
 
@@ -8,6 +8,7 @@
 - `requirement-acceptance`（需求验收）：支持飞书、本地 Markdown 需求/问题清单和直接描述，通过代码、测试和页面操作独立验收，产出有证据的本地报告。
 - `fork-project-dev`（fork项目开发）：parent/main 保存上游原版，main 维护个人稳定版；默认在 codex/dev 开发后直接合回 main，上游更新直接合入本地 main，dev 可选；向原仓库提交 PR 使用独立的 contrib/ 分支。
 - `next-day-trade-plan`（次日波段交易计划）：面向约两周日 K 波段、晚上选股且不盯盘的风格，支持预定时段执行或买卖条件单，规划利润垫首减、余仓等待后续冲高，在整个波段中分三批退出。
+- `stock-candidate-review`（B1/B2 选股复核）：根据股票代码或截图，结合最新日 K、形态、成交量、位置和盈亏比，简洁判断候选股当前是否有交易价值。
 
 开发调用示例：
 
@@ -35,24 +36,36 @@ Fork 项目调用示例：
 
 个性化持仓保存在技能目录的 `references/position.local.md`，带确认日期且由 Git 忽略。新环境没有此文件时使用对话提供的持仓；市场数据每次重新获取。该技能只生成分析计划，不执行交易。
 
+选股复核调用示例：
+
+> 使用 $stock-candidate-review，分析我几天前用 B1/B2 选出的股票：<代码>，判断现在是否值得交易，并计算盈亏比。
+
 ## 分支与云端推送约定
 
 本节用于本技能仓库的交付；使用 `fork-project-dev` 管理的 fork 项目遵循其个人分支流程。
 
-`codex/` 分支只保留本地。明确发起“推送云端”时，默认将本次已确认任务合入本地 main，验证后仅推送远端 main，不再重复确认该流程。本次任务的 codex/ 分支完整合入 main 并验证后自动安全删除；未合并、工作区占用或无法安全删除时保留并说明。
+`codex/` 分支只保留本地。明确发起“推送云端”时，默认将本次已确认任务合入本地 main，验证后仅推送远端 main，不再重复确认该流程。本次开发分支的最终改动完整合入本地 main 并验证后自动安全删除，不再归档，也不以推送成功为前提；未完整合入、存在新增未合并提交、工作区占用或无法安全删除时保留并说明。
 
 全局约定源文件在 `codex/AGENTS.md`，Codex 用户目录 `~/.codex/AGENTS.md` 只保留软链接。
 
+合入 main 的汇总 commit 标题、正文及必要 footer 合计不超过 100 字，优先一句话概括核心成果；保留必要的破坏性变更说明，详细清单与验证过程留在任务记录。
+
 ## 日常维护
 
-1. 在本仓库的 `skills/` 中新增或修改技能。
+1. 在本仓库的 `dev-skills/` 中新增或修改开发技能，在 `invest-skills/` 中新增或修改投资技能。
 2. 校验技能格式，并通过真实任务验证行为。
 3. 检查 Git 差异，再提交；配置远端后推送备份。
 
 新增技能时建立链接，已存在同名目标时先检查，不覆盖：
 
 ```sh
-ln -s /Users/dalton/repo/03_pers-proj/dalton-skills/skills/<skill-name> /Users/dalton/.codex/skills/<skill-name>
+ln -s /Users/dalton/repo/03_pers-proj/dalton-skills/dev-skills/<skill-name> /Users/dalton/.codex/skills/<skill-name>
+```
+
+投资技能从 `invest-skills/` 建立链接，例如：
+
+```sh
+ln -s /Users/dalton/repo/03_pers-proj/dalton-skills/invest-skills/next-day-trade-plan /Users/dalton/.codex/skills/next-day-trade-plan
 ```
 
 本仓库不保存凭据、公司需求快照和任务执行记录。`requirement-dev` 的任务记录存放在 Codex 用户目录外部任务区，不随技能提交。

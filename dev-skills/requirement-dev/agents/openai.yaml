@@ -1,0 +1,4 @@
+interface:
+  display_name: "需求开发"
+  short_description: "默认复用 codex/dev 逐项本地提交，获准后 squash 汇总到 main 并推送"
+  default_prompt: "使用 $requirement-dev，根据需求文档或问题清单开发，确认范围后默认复用已有 codex/dev 及其可用工作目录，分支不存在才创建，逐需求验证并以中文 Conventional Commits 本地提交；获准后 squash 到 main，汇总消息标题、正文及必要 footer 合计不超过 100 字，概括核心成果并保留必要的破坏性变更说明；完整合入 main 并验证后安全删除本地开发分支，不再归档；仅在明确授权时推送 main。"

@@ -7,4 +7,4 @@ __pycache__/
 !.env.example
 
 # 本地持仓快照不随技能发布
-/skills/next-day-trade-plan/references/position.local.md
+/invest-skills/next-day-trade-plan/references/position.local.md

@@ -1,0 +1,4 @@
+interface:
+  display_name: "B1/B2 选股复核"
+  short_description: "结合形态、成交量和位置复核候选股票，计算盈亏比并判断当前交易价值"
+  default_prompt: "使用 $stock-candidate-review，分析我通过 B1/B2 选出的这只股票，结合最新日K、形态和成交量判断当前是否值得交易，并计算盈亏比。"
